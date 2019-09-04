@@ -1,7 +1,6 @@
 # Express Resource
 
-  express-resource provides resourceful routing to express. For Express 2.x
-  use a version __below__ 1.0, for Express 3.x use 1.x.
+  express-resource provides resourceful routing to express. For Express 4.x
 
 ## Installation
 
@@ -45,7 +44,7 @@ The `app.resource()` method returns a new `Resource` object, which can be used t
 
     var express = require('express')
       , Resource = require('express-resource')
-      , app = express();
+      , app = Resource(express());
 
     app.resource('forums', require('./forum'));
 
@@ -105,10 +104,8 @@ Resources have the concept of "auto-loading" associated data. For example we can
 
   This functionality works when nesting resources as well, for example suppose we have a forum, which contains threads, our setup may look something like below:
   
-      var forums = app.resource('forums', require('resources/forums'), { load: Forum.get });
-      var threads = app.resource('threads', require('resources/threads'), { load: Thread.get });
-
-      forums.add(threads);
+      app.resource('forums', require('resources/forums'), { load: Forum.get })
+        .add('threads', require('resources/threads'), { load: Thread.get });
 
   Now when we request `GET /forums/5/threads/12` both the `req.forum` object, and `req.thread` will be available to thread's _show_ action.
 
