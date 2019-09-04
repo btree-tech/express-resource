@@ -7,7 +7,7 @@ var assert = require('assert')
 
 describe('app.resource()', function(){
   it('should support content-negotiation via extension', function(done){
-    var app = express();
+    var app = Resource(express());
     var next = batch(done);
 
     app.set('json spaces', 0);
@@ -43,7 +43,7 @@ describe('app.resource()', function(){
   })
 
   it('should support format methods', function(done){
-    var app = express();
+    var app = Resource(express());
     var next = batch(done);
     app.set('json spaces', 0);
     app.resource('pets', require('./fixtures/pets.format-methods'));
@@ -64,10 +64,9 @@ describe('app.resource()', function(){
 
 describe('app.VERB()', function(){
   it('should map additional routes', function(done){
-    var app = express();
+    var app = Resource(express());
 
     app.set('json spaces', 0);
-    app.use(express.bodyParser());
 
     var pets = app.resource('pets');
     var toys = app.resource('toys');
@@ -83,11 +82,10 @@ describe('app.VERB()', function(){
   })
 
   it('should map format objects', function(done){
-    var app = express();
+    var app = Resource(express());
     var next = batch(done);
 
     app.set('json spaces', 0);
-    app.use(express.bodyParser());
 
     var toys = app.resource('toys');
     var values = ['balls', 'platforms', 'tunnels'];
@@ -123,12 +121,14 @@ describe('app.VERB()', function(){
 
 describe('Resource#add(resource)', function(){
   it('should support nested resources', function(done){
-    var app = express();
+    var app = Resource(express());
     app.set('json spaces', 0);
 
     var users = app.resource('users');
-    var pets = app.resource('pets', require('./fixtures/pets'));
-    users.add(pets);
+    // MARK: change interface for express4.
+    // var pets = app.resource();
+    // users.add(pets);
+    users.add('pets', require('./fixtures/pets'));
 
     request(app)
     .get('/users/1/pets.json')

@@ -11,18 +11,17 @@
     }
   ],
   "dependencies": {
-    "lingo": ">= 0.0.4",
     "methods": "0.0.1",
-    "debug": "*"
+    "pluralize": "^8.0.0"
   },
   "devDependencies": {
     "connect": "2.x",
-    "express": "3.x",
     "ejs": "0.4.x",
-    "qs": "0.1.x",
+    "express": "^4.17.1",
     "mocha": "*",
+    "qs": "0.1.x",
     "should": "*",
-    "supertest": "0.1.2"
+    "supertest": "^4.0.2"
   },
   "keywords": [
     "express",

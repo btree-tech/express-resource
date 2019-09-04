@@ -5,22 +5,23 @@ var assert = require('assert')
   , request = require('supertest')
   , batch = require('./support/batch');
 
-describe('app.resource(name)', function(){
-  it('should return a pre-defined resource', function(){
-    var app = express();
-    app.resource('users', { index: function(){} });
-    app.resource('users').should.be.an.instanceof(Resource);
-    app.resource('foo').should.be.an.instanceof(Resource);
-  })
-})
+//FIXME: can not support this behaviour for express4.
+//describe('app.resource(name)', function(){
+//  it('should return a pre-defined resource', function(){
+//    var app = express();
+//    app.resource('users', { index: function(){} });
+//    app.resource('users').should.be.an.instanceof(Resource);
+//    app.resource('foo').should.be.an.instanceof(Resource);
+//  })
+//})
 
 describe('app.resource()', function(){
   it('should map CRUD actions', function(done){
-    var app = express();
+    var app = Resource(express());
     var next = batch(done);
 
     var ret = app.resource('forums', require('./fixtures/forum'));
-    ret.should.be.an.instanceof(Resource);
+    ret.should.be.an.instanceof(Resource.Resource);
 
     request(app)
     .get('/forums')
@@ -56,11 +57,10 @@ describe('app.resource()', function(){
   })
 
   it('should support root resources', function(done){
-     var app = express();
+     var app = Resource(express());
      var next = batch(done);
      var forum = app.resource('forums', require('./fixtures/forum'));
-     var thread = app.resource('threads', require('./fixtures/thread'));
-     forum.map(thread);
+     forum.add('threads', require('./fixtures/thread'));
   
      request(app)
      .get('/forums')
@@ -129,7 +129,7 @@ describe('app.resource()', function(){
   
    describe('"id" option', function(){
      it('should allow overriding the default', function(done){
-       var app = express();
+       var app = Resource(express());
        var next = batch(done);
      
        app.resource('users', {
@@ -151,7 +151,7 @@ describe('app.resource()', function(){
   
    describe('with several segments', function(){
      it('should work', function(done){
-       var app = express();
+       var app = Resource(express());
        var next = batch(done);
        var cat = app.resource('api/cat', require('./fixtures/cat'));
   
@@ -166,7 +166,7 @@ describe('app.resource()', function(){
    })
   
    it('should allow configuring routes', function(done){
-     var app = express();
+     var app = Resource(express());
      var next = batch(done);
      var Forum = require('./fixtures/forum').Forum;
      
@@ -197,7 +197,7 @@ describe('app.resource()', function(){
    describe('autoloading', function(){
      describe('when no resource is found', function(){
        it('should not invoke the callback', function(done){
-          var app = express();
+          var app = Resource(express());
        
           function load(id, fn) { fn(); }
           var actions = { show: function(){
@@ -214,15 +214,14 @@ describe('app.resource()', function(){
   
      describe('when a resource is found', function(){
        it('should invoke the callback', function(done){
-         var app = express();
+         var app = Resource(express());
          var Forum = require('./fixtures/forum').Forum;
        
          var actions = { show: function(req, res){
            res.end(req.forum.title);
          }};
        
-         var forum = app.resource('forum', actions);
-         forum.load(Forum.get);
+         var forum = app.resource('forum', actions, { load: Forum.get });
   
          request(app)
          .get('/forum/12')
@@ -230,7 +229,7 @@ describe('app.resource()', function(){
        })
   
        it('should work recursively', function(done){
-         var app = express();
+         var app = Resource(express());
          var Forum = require('./fixtures/forum').Forum;
          var Thread = require('./fixtures/thread').Thread;
        
@@ -239,9 +238,7 @@ describe('app.resource()', function(){
          }};
        
          var forum = app.resource('forum', { load: Forum.get });
-         var threads = app.resource('thread', actions, { load: Thread.get });
-       
-         forum.add(threads);
+         forum.add('thread', actions, { load: Thread.get });
   
          request(app)
          .get('/forum/12/thread/1')

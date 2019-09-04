@@ -12,7 +12,7 @@ exports.index = function(req, res){
       }).join('') + '</pets>');
       break;
     default:
-      res.send(406);
+      res.sendStatus(406);
   }
 };
 
@@ -25,7 +25,7 @@ exports.show = function(req, res){
       res.end('<pet>' + req.pet + '</pet>');
       break;
     default:
-      res.send(406);
+      res.sendStatus(406);
   }
 };
 
@@ -38,7 +38,7 @@ exports.destroy = function(req, res){
       res.send('<message>pet removed</message>');
       break;
     default:
-      res.send(406);
+      res.sendStatus(406);
   }
 };
 
