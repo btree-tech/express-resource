@@ -15,11 +15,8 @@
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
-    "connect": "2.x",
-    "ejs": "0.4.x",
     "express": "^4.17.1",
     "mocha": "*",
-    "qs": "0.1.x",
     "should": "*",
     "supertest": "^4.0.2"
   },
